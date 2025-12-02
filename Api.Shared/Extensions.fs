@@ -22,6 +22,10 @@ module Async =
 type Fetch.Types.Request with
     static member create(url: string, init: RequestProperties list): Request =
         emitJsExpr (url, requestProps init) "new Request($0, $1)"
+        
+type DecoderError =
+    | Serialization of string
+    | Http of int
 
 module Response =
     let decode (decoder: Decoder<'a>) (res: Response) =
@@ -29,8 +33,11 @@ module Response =
             let! json = res.text() |> Async.AwaitPromise
 
             match res.Status with
-            | v when v >= 200 && v < 300 && v <> 204 -> return! json |> Decode.fromString decoder
-            | status -> return! Error $"Request failed with status {status}"
+            | v when v >= 200 && v < 300 && v <> 204 ->
+                return! json |> Decode.fromString decoder |> Result.mapError DecoderError.Serialization
+
+            | status ->
+                return! Error (DecoderError.Http status)
         }
 
     let success (res: Response) =
@@ -144,3 +151,12 @@ module Headers =
         match headers.has key with
         | true -> Some (headers.get key)
         | false -> None
+        
+type Browser.Types.FormData with
+    static member create(): FormData =
+        emitJsExpr () "new FormData()"
+        
+module FormData =
+    let set (key: string) (value: string) (formData: FormData) =
+        formData.set(key, value)
+        formData

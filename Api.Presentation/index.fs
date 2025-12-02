@@ -1,6 +1,7 @@
 ﻿module Api.Presentation.Api
 
 open Api.Application
+open Api.Infrastructure.Discord
 open Api.Infrastructure.Persistence
 open Browser
 open Fable.Bindings.CloudflareWorkers
@@ -12,6 +13,16 @@ open System
 type DI(env) =
     interface EnvDI with
         member _.Env = env
+
+    interface FetcherDI with
+        member _.Fetcher = {
+            Fetch = Fetcher.fetch
+        }
+
+    interface DiscordDI with
+        member this.Discord = {
+            OAuthTokenExchange = DiscordApi.oauthTokenExchange this
+        }
 
     interface UserRepositoryDI with
         member this.UserRepository = {

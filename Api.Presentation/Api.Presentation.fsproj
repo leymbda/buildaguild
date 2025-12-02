@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Api.Application\Api.Application.fsproj" />
+    <ProjectReference Include="..\Api.Infrastructure.Discord\Api.Infrastructure.Discord.fsproj" />
     <ProjectReference Include="..\Api.Infrastructure.Persistence\Api.Infrastructure.Persistence.fsproj" />
   </ItemGroup>
 

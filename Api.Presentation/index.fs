@@ -29,8 +29,8 @@ type DI(env) =
 
     interface AuthServiceDI with
         member this.AuthService = {
-            Authenticate = AuthService.authenticate this
-            GetSession = AuthService.getSession this
+            Login = AuthService.login this
+            Logout = AuthService.logout this
         }
 
     interface UserServiceDI with
@@ -53,13 +53,9 @@ module Program =
             // TODO: Move above into common utility
             
             match req.method, parts with
-            | "POST", ["api"; "oauth2"; "token"] -> return Response.notImplemented() // TODO: Access/refresh token exchange
-            
-            | "POST", ["api"; "oauth2"; "token"; "revoke"] -> return Response.notImplemented() // TODO: Token revocation
-        
-            | "GET", ["api"; "oauth2"; "@me"] -> return Response.notImplemented() // TODO: Fetch current auth info
-        
-            | _, "api" :: "users" :: rest -> return! UserResource.fetch di req rest
+            | _, "api" :: "auth" :: rest -> return! AuthController.fetch di req rest
+
+            | _, "api" :: "users" :: rest -> return! UserController.fetch di req rest
 
             | _ -> return Response.notFound ""
         }

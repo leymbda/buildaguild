@@ -3,21 +3,21 @@
 open Domain
 
 module IAuthService =
-    type AuthenticateError =
-        | InvalidToken
+    type LoginError =
+        | InvalidCode
         | ServerError of string
 
-    type Authenticate = string -> Async<Result<User, AuthenticateError>>
+    type Login = string -> Async<Result<{| User: User; SessionToken: string |}, LoginError>>
 
-    type GetSessionError =
-        | InvalidToken
+    type LogoutError =
+        | SessionNotFound
         | ServerError of string
 
-    type GetSession = string -> Async<Result<Session, GetSessionError>>
-
+    type Logout = string -> Async<Result<unit, LogoutError>>
+    
 type IAuthService = {
-    Authenticate: IAuthService.Authenticate
-    GetSession: IAuthService.GetSession
+    Login: IAuthService.Login
+    Logout: IAuthService.Logout
 }
 
 type AuthServiceDI =

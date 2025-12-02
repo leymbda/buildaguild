@@ -6,12 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="ValueObjects\Id.fs" />
-    <Compile Include="AggregateRoots\User.fs" />
+    <Compile Include="D1.fs" />
+    <Compile Include="KV.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="10.0.100" />
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Api.Application\Api.Application.fsproj" />
   </ItemGroup>
 
 </Project>

@@ -105,6 +105,14 @@ module Response =
             ]
         )
 
+    let internalServerError (message: string) =
+        Response.create(
+            message,
+            [
+                Status 500
+            ]
+        )
+
     let notImplemented () =
         Response.create(
             "",

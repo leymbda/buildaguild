@@ -3,13 +3,22 @@
 open Domain
 
 module IAuthService =
-    type GetSession = string -> Async<Session option>
-    type Authenticate = string -> Async<User option>
+    type AuthenticateError =
+        | InvalidToken
+        | ServerError of string
+
+    type Authenticate = string -> Async<Result<User, AuthenticateError>>
+
+    type GetSessionError =
+        | InvalidToken
+        | ServerError of string
+
+    type GetSession = string -> Async<Result<Session, GetSessionError>>
 
 type IAuthService = {
-    GetSession: IAuthService.GetSession
     Authenticate: IAuthService.Authenticate
+    GetSession: IAuthService.GetSession
 }
 
 type AuthServiceDI =
-    abstract Auth: IAuthService
+    abstract AuthService: IAuthService

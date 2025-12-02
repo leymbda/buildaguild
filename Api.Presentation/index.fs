@@ -1,39 +1,43 @@
 ﻿module Api.Presentation.Api
 
 open Api.Application
-open Api.Infrastructure.UserDurableObject
+open Api.Infrastructure.Persistence
 open Browser
-open Domain
 open Fable.Bindings.CloudflareWorkers
 open Fable.Core
 open Fable.Core.JsInterop
 open Fetch
 open System
 
-let TEMPORARY_REQUEST_USER_ID = Id.Id (Guid.NewGuid())
-
 type DI(env) =
     interface EnvDI with
         member _.Env = env
 
+    interface UserRepositoryDI with
+        member this.UserRepository = {
+            CreateUser = D1.createUser this
+            GetUserById = D1.getUserById this
+            DeleteUserById = D1.deleteUserById this
+        }
+
+    interface SessionCacheDI with
+        member this.SessionCache = {
+            PutSession = KV.putSession this
+            GetSession = KV.getSession this
+            DeleteSession = KV.deleteSession this
+        }
+
     interface AuthServiceDI with
-        member this.Auth = {
-            GetSession = AuthService.getSession this
+        member this.AuthService = {
             Authenticate = AuthService.authenticate this
+            GetSession = AuthService.getSession this
         }
 
     interface UserServiceDI with
-        member this.Users = {
-            CreateUser = UserDurableObjectProxy.createUser this
-            GetUserById = UserDurableObjectProxy.getUserById this
-            DeleteUserById = UserDurableObjectProxy.deleteUserById this
-        }
-
-    interface UserApplicationServiceDI with
-        member this.UserApplicationService = {
-            CreateUser = UserApplicationService.createUser this
-            GetUser = UserApplicationService.getUser this
-            DeleteUser = UserApplicationService.deleteUser this
+        member this.UserService = {
+            CreateUser = UserService.createUser this
+            GetUserById = UserService.getUserById this
+            DeleteUserById = UserService.deleteUserById this
         }
     
 module Program =
@@ -45,6 +49,8 @@ module Program =
                 |> Array.toList
                 |> List.map (fun s -> s.Trim('/'))
                 |> List.filter (fun s -> s <> "")
+
+            // TODO: Move above into common utility
             
             match req.method, parts with
             | "POST", ["api"; "oauth2"; "token"] -> return Response.notImplemented() // TODO: Access/refresh token exchange
@@ -57,13 +63,9 @@ module Program =
 
             | _ -> return Response.notFound ""
         }
-        
-        // TODO: Create shared project for common utilities like above (with shared deps like Fable.Browser.Url, Thoth.Json, etc)
 
 exportDefault {|
     fetch = fun (req: Request) (env: Env) (ctx: ExecutionContext<unit>) ->
         let di = DI(env)
         Program.fetch di req ctx |> Async.StartAsPromise
 |}
-
-type UserDurableObject(env, props) = inherit Api.Infrastructure.UserDurableObject.UserDurableObject(env, props)

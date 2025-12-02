@@ -2,18 +2,18 @@
 
 open System
 
-type Id = Id of Guid
+type Id = Id of int64
 
 module Id =
-    let create () =
-        Id (Guid.NewGuid())
+    let create (snowflake: int64) =
+        Id snowflake
 
     let fromString (id: string) =
-        match Guid.TryParse id with
-        | true, guid -> Some (Id guid)
+        match Int64.TryParse id with
+        | true, snowflake -> Some (Id snowflake)
         | false, _ -> None
         
-    let (|Match|_|) (id: string) =
+    let (|FromRoute|_|) (id: string) =
         fromString id
 
     let toString (Id id) =

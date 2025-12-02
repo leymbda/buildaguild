@@ -1,28 +1,33 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "api",
-  "main": "index.fs.js",
-  "compatibility_date": "2025-10-08",
-  "migrations": [
-    {
-      "new_sqlite_classes": ["UserDurableObject"],
-      "tag": "v1"
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "api",
+    "main": "index.fs.js",
+    "compatibility_date": "2025-10-08",
+    "d1_databases": [
+        {
+            "binding": "D1",
+            "database_name": "buildaguild",
+            "database_id": "a588237c-3385-454d-ab9c-2031e1e701b6",
+            "preview_database_id": "04a2e42d-8025-442d-9497-28e6a90e3168",
+            "migrations_table": "d1_migrations",
+            "migrations_dir": "../Api.Infrastructure.Persistence/Migrations"
+        }
+    ],
+    "kv_namespaces": [
+        {
+            "binding": "SESSION_KV",
+            "id": "57e72aba-fac2-44ab-b80a-4c05bcbd1540",
+            "preview_id": "7cd8e73e-40c6-4fff-9bc6-1f724d0eb2cf"
+        }
+    ],
+    "vars": {
+        "CLIENT_ID": "1445210969432264704",
+        "CLIENT_PUBLIC_KEY": "78fc58e43115eee919aad14f2fb42e9d4ad5e467d12e7afb0c1d89bd08665a7a",
+        "REDIRECT_URI": "http://localhost/auth/callback"
+
+        // TODO: Handle envs to support prod vars/secrets
+    },
+    "observability": {
+        "enabled": true
     }
-  ],
-  "durable_objects": {
-    "bindings": [
-      {
-        "class_name": "UserDurableObject",
-        "name": "USER_DO"
-      }
-    ]
-  },
-  "vars": {
-    "CLIENT_ID": "1278984663691431986",
-    "CLIENT_PUBLIC_KEY": "b49aaa26b552debd32d442ce01941ae7dca91882715079f6a2c21d91caf79867",
-    "REDIRECT_URI": "http://localhost/auth/callback"
-  },
-  "observability": {
-    "enabled": true
-  }
 }

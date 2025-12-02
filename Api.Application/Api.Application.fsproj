@@ -1,18 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="Models\Session.fs" />
     <Compile Include="Interfaces\Env.fs" />
+    <Compile Include="interfaces\IUserRepository.fs" />
+    <Compile Include="interfaces\ISessionCache.fs" />
     <Compile Include="Interfaces\IAuthService.fs" />
     <Compile Include="Interfaces\IUserService.fs" />
-    <Compile Include="Interfaces\IUserApplicationService.fs" />
     <Compile Include="Services\AuthService.fs" />
-    <Compile Include="Services\UserApplicationService.fs" />
+    <Compile Include="Services\UserService.fs" />
   </ItemGroup>
 
   <ItemGroup>

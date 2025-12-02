@@ -4,33 +4,46 @@ open Api.Application
 open Api.Application.IAuthService
 open Browser
 open Fetch
+open FsToolkit.ErrorHandling
 
 let fetch (di: #AuthServiceDI) (req: Request) (parts: string list) =
-    async {
+    asyncResult {
         let url = URL.Create(req.url)
 
         match req.method, parts with
         | "POST", ["login"] ->
-            let code = "" // TODO: Get code from query params/body
+            let! code =
+                url.searchParams.get("code")
+                |> Result.requireSome (Response.badRequest "Missing 'code' query parameter")
 
-            match! di.AuthService.Login code with
-            | Error LoginError.InvalidCode -> return Response.badRequest "Invalid authorization code"
-            | Error (LoginError.ServerError e) -> return Response.internalServerError e
-            | Ok data -> 
-                let cookie = data.SessionToken // TODO: Make actual cookie using this token
+            let! data =
+                di.AuthService.Login code
+                |> AsyncResult.mapError (function
+                    | LoginError.InvalidCode -> Response.badRequest "Invalid authorization code"
+                    | LoginError.ServerError e -> Response.internalServerError e
+                )
 
-                let res = Response.ok (UserResource.fromDomain data.User) UserResource.encoder
-                res.Headers.set("Set-Cookie", cookie)
-                return res
+            let res = Response.ok (UserResource.fromDomain data.User) UserResource.encoder
+            res.Headers.set("Set-Cookie", data.SessionToken ) // TODO: Make actual cookie using this token
+            return res
 
-        | "DELETE", ["logout"] ->
-            let token = "" // TODO: Get token from request cookie
+        | "POST", ["logout"] ->
+            let! token =
+                Headers.tryGet "Cookie" req.headers // TODO: Get token from request cookie
+                |> Result.requireSome (Response.unauthorized())
 
-            match! di.AuthService.Logout token with
-            | Error LogoutError.SessionNotFound -> return Response.unauthorized()
-            | Error (LogoutError.ServerError e) -> return Response.internalServerError e
-            | Ok () -> return Response.noContent()
+            // TODO: Above should probably be a common utility as authorization is common (needs to be in UserController too)
+            
+            do!
+                di.AuthService.Logout token
+                |> AsyncResult.mapError (function
+                    | LogoutError.SessionNotFound -> Response.unauthorized()
+                    | LogoutError.ServerError e -> Response.internalServerError e
+                )
+
+            return Response.noContent()
 
         | _ ->
             return Response.notFound ""
     }
+    |> AsyncResult.defaultWith id

@@ -138,3 +138,9 @@ module Url =
 
     let toRequest (method: HttpMethod) (url: URL) =
         Request.create(url.toString(), [Method method])
+
+module Headers =
+    let tryGet (key: string) (headers: Headers) =
+        match headers.has key with
+        | true -> Some (headers.get key)
+        | false -> None

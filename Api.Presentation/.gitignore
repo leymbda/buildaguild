@@ -1,0 +1,9 @@
+.wrangler
+bin
+node_modules
+fable_modules
+obj
+.env
+**/*.js
+**/*.ts
+!worker-configuration.d.ts

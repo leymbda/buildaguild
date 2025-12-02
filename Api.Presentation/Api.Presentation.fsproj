@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <Compile Include="Resources\UserResource.fs" />
+	  <Compile Include="index.fs" />
+	  <None Include="package.json" />
+	  <None Include="worker-configuration.d.ts" />
+	  <None Include="wrangler.jsonc" />
+	  <None Include=".env" />
+	  <None Include=".env.example" />
+	  <None Include="README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Api.Application\Api.Application.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="10.0.100" />
+  </ItemGroup>
+
+</Project>

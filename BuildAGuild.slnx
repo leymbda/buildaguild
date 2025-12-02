@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Api.Application/Api.Application.fsproj" Id="b8311042-4187-4ff6-9e3e-f351bd4876e8" />
+  <Project Path="Api.Presentation/Api.Presentation.fsproj" />
+  <Project Path="Api.Shared/Api.Shared.fsproj" Id="434ff71f-e68a-4764-b28e-ab45a2bf73e2" />
+  <Project Path="Domain/Domain.fsproj" Id="f4c80f4c-8f02-43e9-93f1-9e89a443142c" />
+  <Project Path="Fable.Bindings/Fable.Bindings.fsproj" />
+</Solution>

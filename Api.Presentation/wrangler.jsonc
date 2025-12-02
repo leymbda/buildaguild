@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "api",
+  "main": "index.fs.js",
+  "compatibility_date": "2025-10-08",
+  "migrations": [
+    {
+      "new_sqlite_classes": ["UserDurableObject"],
+      "tag": "v1"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "class_name": "UserDurableObject",
+        "name": "USER_DO"
+      }
+    ]
+  },
+  "vars": {
+    "CLIENT_ID": "1278984663691431986",
+    "CLIENT_PUBLIC_KEY": "b49aaa26b552debd32d442ce01941ae7dca91882715079f6a2c21d91caf79867",
+    "REDIRECT_URI": "http://localhost/auth/callback"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

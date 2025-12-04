@@ -38,12 +38,7 @@ let deleteUserById (di: #UserRepositoryDI): IUserService.DeleteUserById =
             userId = session.UserId
             |> Result.requireTrue DeleteUserByIdError.NotAuthorized
             
-        let! user =
+        do!
             di.UserRepository.DeleteUserById userId
-            |> AsyncResult.mapError (function
-                | IUserRepository.DeleteUserByIdError.DatabaseError e -> DeleteUserByIdError.ServerError e
-                | IUserRepository.DeleteUserByIdError.UserNotFound id -> DeleteUserByIdError.UserNotFound id
-            )
-
-        return user
+            |> AsyncResult.requireTrue (DeleteUserByIdError.UserNotFound userId)
     }

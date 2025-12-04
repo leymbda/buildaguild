@@ -5,16 +5,13 @@ open Api.Application.IUserService
 open Browser
 open Domain
 open Fetch
-open FsToolkit.ErrorHandling
 
 let fetch (di: #UserServiceDI & #SessionCacheDI) (req: Request) (parts: string list) =
     async {
         let url = URL.Create(req.url)
 
         let token = "" // TODO: Extract session from header (TBD how it will be added)
-        let! session =
-            di.SessionCache.GetSession token
-            |> AsyncResult.foldResult Some (fun _ -> None)
+        let! session = di.SessionCache.GetSession token
 
         match req.method, parts, session with
         | "PUT", [Id.FromRoute userId], Some session ->

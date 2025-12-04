@@ -2,6 +2,7 @@
 module Extensions
 
 open Browser.Types
+open Fable.Bindings.CloudflareWorkers
 open Fable.Core
 open Fable.Core.JsInterop
 open Fetch
@@ -161,10 +162,28 @@ module FormData =
         formData.set(key, value)
         formData
 
-module Decode =
-    let requireSome (decoder: Decoder<'a option>): Decoder<'a> =
-        decoder
-        |> Decode.andThen (function
-            | Some x -> Decode.succeed x
-            | None -> Decode.fail "Invalid value: mapping returned None"
-        )
+module D1PreparedStatement =
+    /// Execute the prepared statement and decode the results using the provided Thoth.Json decoder to ensure data
+    /// matches the expected type.
+    let query<'a> (decoder: Decoder<'a>) (statement: D1PreparedStatement) =
+        async {
+            let! res =
+                statement.run<obj>()
+                |> Async.AwaitPromise
+
+            let decoded =
+                res.results
+                |> Array.map (fun row -> emitJsExpr<string> row "JSON.stringify($0)")
+                |> Array.choose (Decode.fromString decoder >> Result.toOption)
+
+            return { new D1Result<'a> with
+                member _.results = decoded
+                member _.meta = res.meta
+            }
+        }
+
+    /// Execute the prepared statement and return only the meta information about the execution.
+    let meta (statement: D1PreparedStatement) =
+        statement.run<obj>()
+        |> Promise.map (_.meta)
+        |> Async.AwaitPromise

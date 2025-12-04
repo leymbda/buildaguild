@@ -6,12 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="models\SessionModel.fs" />
+    <Compile Include="models\UserModel.fs" />
     <Compile Include="D1.fs" />
     <Compile Include="KV.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="Models\" />
   </ItemGroup>
 
   <ItemGroup>

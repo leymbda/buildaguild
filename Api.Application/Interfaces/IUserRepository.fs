@@ -21,11 +21,7 @@ module IUserRepository =
 
     type GetUserById = Id -> Async<Result<User, GetUserByIdError>>
     
-    type DeleteUserByIdError =
-        | UserNotFound of Id
-        | DatabaseError of string
-
-    type DeleteUserById = Id -> Async<Result<unit, DeleteUserByIdError>>
+    type DeleteUserById = Id -> Async<bool>
 
 type UserRepositoryDI =
     abstract UserRepository: IUserRepository

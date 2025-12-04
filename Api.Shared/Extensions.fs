@@ -160,3 +160,11 @@ module FormData =
     let set (key: string) (value: string) (formData: FormData) =
         formData.set(key, value)
         formData
+
+module Decode =
+    let requireSome (decoder: Decoder<'a option>): Decoder<'a> =
+        decoder
+        |> Decode.andThen (function
+            | Some x -> Decode.succeed x
+            | None -> Decode.fail "Invalid value: mapping returned None"
+        )

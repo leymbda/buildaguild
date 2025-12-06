@@ -1,0 +1,14 @@
+@user_id = 1234567890
+
+### Create user
+PUT http://localhost/api/users/{{user_id}}
+
+###
+### Get user by ID
+GET http://localhost/api/users/{{user_id}}
+
+###
+### Delete user by ID
+DELETE http://localhost/api/users/{{user_id}}
+
+###

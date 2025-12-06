@@ -4,8 +4,9 @@
     "main": "index.fs.js",
     "scripts": {
         "clean": "dotnet fable clean .. --yes && dotnet fable clean .. --lang typescript --yes",
-        "build": "dotnet fable && wrangler types",
-        "build:ts": "dotnet fable --lang typescript --noCache && wrangler types",
+        "migrate": "wrangler d1 migrations apply D1 --local",
+        "build": "npm run migrate && dotnet fable && wrangler types",
+        "build:ts": "npm run migrate && dotnet fable --lang typescript --noCache && wrangler types",
         "start": "wrangler dev --port 80",
         "build+start": "npm run build && npm run start",
         "deploy": "wrangler deploy"

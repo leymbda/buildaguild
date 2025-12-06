@@ -14,8 +14,11 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <None Include="migrations\202512061016_create_user_table.sql" />
     <Folder Include="Models\" />
   </ItemGroup>
+
+  <ItemGroup />
 
   <ItemGroup>
     <ProjectReference Include="..\Api.Application\Api.Application.fsproj" />

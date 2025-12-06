@@ -1,6 +1,7 @@
 namespace Api.Infrastructure.Discord
 
 open Api.Application
+open System
 open Thoth.Json
 
 module OAuthTokenExchangeResponse =
@@ -11,4 +12,10 @@ module OAuthTokenExchangeResponse =
             ExpiresIn = get.Required.Field "expires_in" Decode.int
             RefreshToken = get.Required.Field "refresh_token" Decode.string
             Scope = get.Required.Field "scope" Decode.string |> _.Split(' ') |> Array.toList
+        })
+
+module UserResponse =
+    let decoder: Decoder<UserResponse> =
+        Decode.object (fun get -> {
+            Id = get.Required.Field "id" (Decode.string |> Decode.map Int64.Parse)
         })

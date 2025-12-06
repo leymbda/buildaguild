@@ -10,25 +10,41 @@ open Fetch
 let oauthTokenExchange (di: #EnvDI & #FetcherDI): OAuthTokenExchange =
     fun code -> async {
         let body =
-            FormData.create()
-            |> FormData.set "grant_type" "authorization_code"
-            |> FormData.set "code" code
-            |> FormData.set "redirect_uri" di.Env.REDIRECT_URI
-            |> FormData.set "client_id" di.Env.CLIENT_ID
-            |> FormData.set "client_secret" di.Env.CLIENT_SECRET
+            URLSearchParams.create()
+            |> URLSearchParams.set "grant_type" "authorization_code"
+            |> URLSearchParams.set "code" code
+            |> URLSearchParams.set "redirect_uri" di.Env.REDIRECT_URI
+            |> URLSearchParams.set "client_id" di.Env.CLIENT_ID
+            |> URLSearchParams.set "client_secret" di.Env.CLIENT_SECRET
+            |> URLSearchParams.set "scope" "identify"
+            |> URLSearchParams.toString
         
         let! res = 
             di.Fetcher.Fetch
-                $"http://discord.com/api/oauth2/token"
+                $"https://discord.com/api/oauth2/token"
                 [
                     Method HttpMethod.POST
                     requestHeaders [
                         ContentType "application/x-www-form-urlencoded"
                     ]
-                    Body (U3.Case2 body)
+                    Body (U3.Case3 body)
                 ]
 
         return! res |> Response.decode OAuthTokenExchangeResponse.decoder
     }
 
-// TODO: Token revocation, get current user, etc
+let getCurrentUser (di: #EnvDI & #FetcherDI): GetCurrentUser =
+    fun accessToken -> async {
+        let! res = 
+            di.Fetcher.Fetch
+                "https://discord.com/api/users/@me"
+                [
+                    Method HttpMethod.GET
+                    requestHeaders [
+                        Authorization $"Bearer {accessToken}"
+                    ]
+                ]
+        return! res |> Response.decode UserResponse.decoder
+    }
+
+// TODO: Token revocation, etc

@@ -5,5 +5,5 @@ open Fable.Core
 
 let fetch: Fetch =
     fun url init ->
-        Fetch.fetch url init
+        Fetch.fetchUnsafe url init
         |> Async.AwaitPromise

@@ -23,8 +23,12 @@ let fetch (di: #AuthServiceDI) (req: Request) (parts: string list) =
                     | LoginError.ServerError e -> Response.internalServerError e
                 )
 
-            let res = Response.ok (UserResource.fromDomain data.User) UserResource.encoder
-            res.Headers.set("Set-Cookie", data.SessionToken ) // TODO: Make actual cookie using this token
+            let res =
+                match data.User with
+                | Some user -> Response.ok (UserResource.fromDomain user) UserResource.encoder
+                | None -> Response.noContent()
+
+            res.Headers.set("Set-Cookie", data.SessionToken) // TODO: Make actual cookie using this token
             return res
 
         | "POST", ["logout"] ->
@@ -40,6 +44,8 @@ let fetch (di: #AuthServiceDI) (req: Request) (parts: string list) =
                     | LogoutError.SessionNotFound -> Response.unauthorized()
                     | LogoutError.ServerError e -> Response.internalServerError e
                 )
+
+            // TODO: Revoke token from Discord too
 
             return Response.noContent()
 

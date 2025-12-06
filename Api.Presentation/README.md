@@ -12,9 +12,15 @@ This is the API project for **Build a Guild**, built using Fable and Cloudflare 
 1. Run `npm run build` to compile code and regenerate `worker-configuration.d.ts`
 2. Run `npm start` to start the worker
 
+You can also use `npm run build+start` to do both steps in one command. This is particularly useful when testing quick small code changes as the single command will rebuild and restart the worker.
+
 If you wish to delete all Fable artifacts from the solution in order to build fresh, run `npm run clean`.
 
 If generating TS is necessary in order to inspect types being generated, run `npm run build:ts` instead. Note that the worker is setup to run using the JS output, so this TS build cannot be used for running the worker.
+
+## Databse Migrations
+
+Database migrations are run as part of the build script, but can also be run manually through `npm run migrate`. Naming migrations follows the convention of using the current time to order runs correctly. For example, a migration created at 2025-12-06 10:16 would be named with the prefix `202512061016_`. 
 
 ## Updating Worker Bindings
 

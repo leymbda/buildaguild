@@ -67,7 +67,7 @@ module Response =
 
     let noContent () =
         Response.create(
-            "",
+        "",
             [
                 Status 204
             ]
@@ -129,6 +129,8 @@ module Response =
             ]
         )
 
+    // TODO: Figure out how to return a null body to prevent the warning. `(string)null` does not work
+
 module Url =
     let create (url: string) =
         Browser.Url.URL.Create(url)
@@ -161,6 +163,18 @@ module FormData =
     let set (key: string) (value: string) (formData: FormData) =
         formData.set(key, value)
         formData
+
+type Browser.Types.URLSearchParams with
+    static member create(): URLSearchParams =
+        emitJsExpr () "new URLSearchParams()"
+
+module URLSearchParams =
+    let set (key: string) (value: string) (search: URLSearchParams) =
+        search.set(key, value)
+        search
+
+    let toString (search: URLSearchParams) =
+        emitJsExpr (search) "$0.toString()"
 
 module D1PreparedStatement =
     /// Execute the prepared statement and decode the results using the provided Thoth.Json decoder to ensure data

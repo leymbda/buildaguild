@@ -1,0 +1,10 @@
+### Login
+@code = oauth2_code_goes_here
+
+POST http://localhost/api/auth/login?code={{code}}
+
+###
+### Logout
+POST http://localhost/api/auth/logout
+
+###

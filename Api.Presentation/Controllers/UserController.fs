@@ -10,7 +10,7 @@ let fetch (di: #UserServiceDI & #SessionCacheDI) (req: Request) (parts: string l
     async {
         let url = URL.Create(req.url)
 
-        let token = "" // TODO: Extract session from header (TBD how it will be added)
+        let token = "TEMP_SESSION_TOKEN" // TODO: Extract session from header (TBD how it will be added)
         let! session = di.SessionCache.GetSession token
 
         match req.method, parts, session with

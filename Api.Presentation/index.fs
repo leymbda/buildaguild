@@ -19,9 +19,16 @@ type DI(env) =
             Fetch = Fetcher.fetch
         }
 
+    interface TimeDI with
+        member _.Time = {
+            GetCurrentTime = Time.getCurrentTime
+            GetCurrentUnixTime = Time.getCurrentUnixTime
+        }
+
     interface DiscordDI with
         member this.Discord = {
             OAuthTokenExchange = DiscordApi.oauthTokenExchange this
+            GetCurrentUser = DiscordApi.getCurrentUser this
         }
 
     interface UserRepositoryDI with

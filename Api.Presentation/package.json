@@ -1,15 +1,12 @@
 {
     "name": "api",
+    "private": true,
     "type": "module",
     "main": "index.fs.js",
     "scripts": {
-        "clean": "dotnet fable clean .. --yes && dotnet fable clean .. --lang typescript --yes",
         "migrate": "wrangler d1 migrations apply D1 --local",
-        "build": "npm run migrate && dotnet fable && wrangler types",
-        "build:ts": "npm run migrate && dotnet fable --lang typescript --noCache && wrangler types",
-        "start": "wrangler dev --port 80",
-        "build+start": "npm run build && npm run start",
-        "deploy": "wrangler deploy"
+        "build": "npm run migrate && dotnet fable --sourceMaps",
+        "build:ts": "npm run migrate && dotnet fable --sourceMaps --lang typescript --noCache"
     },
     "devDependencies": {
         "typescript": "^5.5.2",

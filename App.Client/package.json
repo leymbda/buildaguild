@@ -1,0 +1,17 @@
+{
+    "name": "app",
+    "version": "1.0.0",
+    "private": true,
+    "dependencies": {
+        "react": "^19.2.1",
+        "react-dom": "^19.2.1",
+        "use-sync-external-store": "^1.6.0"
+    },
+    "devDependencies": {
+        "vite": "^7.2.6"
+    },
+    "scripts": {
+        "build": "dotnet fable --sourceMaps --run vite build",
+        "build:ts": "dotnet fable --lang typescript --noCache --sourceMaps --run vite build"
+    }
+}

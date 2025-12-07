@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="models\SessionModel.fs" />
-    <Compile Include="models\UserModel.fs" />
+    <Compile Include="Models\SessionModel.fs" />
+    <Compile Include="Models\UserModel.fs" />
     <Compile Include="D1.fs" />
     <Compile Include="KV.fs" />
   </ItemGroup>

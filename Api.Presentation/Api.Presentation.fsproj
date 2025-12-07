@@ -8,17 +8,13 @@
   <ItemGroup>
 	  <Compile Include="Resources\UserResource.fs" />
 	  <Folder Include="Controllers\" />
-	  <Compile Include="controllers\AuthController.fs" />
-	  <None Include="controllers\AuthController.http" />
-	  <Compile Include="controllers\UserController.fs" />
-	  <None Include="controllers\UserController.http" />
+	  <Compile Include="Controllers\AuthController.fs" />
+	  <None Include="Controllers\AuthController.http" />
+	  <Compile Include="Controllers\UserController.fs" />
+	  <None Include="Controllers\UserController.http" />
 	  <Compile Include="index.fs" />
-	  <None Include="package.json" />
 	  <None Include="worker-configuration.d.ts" />
-	  <None Include="wrangler.jsonc" />
-	  <None Include=".env" />
-	  <None Include=".env.example" />
-	  <None Include="README.md" />
+	  <None Include="package.json" />
   </ItemGroup>
 
   <ItemGroup>

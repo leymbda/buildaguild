@@ -1,7 +1,11 @@
 {
     "$schema": "node_modules/wrangler/config-schema.json",
     "name": "api",
-    "main": "index.fs.js",
+    "main": "Api.Presentation/index.fs.js",
+    "assets": {
+        "directory": "App.Client/dist/",
+        "not_found_handling": "404-page"
+    },
     "compatibility_date": "2025-10-08",
     "d1_databases": [
         {
@@ -10,7 +14,7 @@
             "database_id": "a588237c-3385-454d-ab9c-2031e1e701b6",
             "preview_database_id": "04a2e42d-8025-442d-9497-28e6a90e3168",
             "migrations_table": "d1_migrations",
-            "migrations_dir": "../Api.Infrastructure.Persistence/Migrations"
+            "migrations_dir": "Api.Infrastructure.Persistence/Migrations"
         }
     ],
     "kv_namespaces": [

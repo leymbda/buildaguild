@@ -8,15 +8,15 @@
   <ItemGroup>
     <Compile Include="Models\Session.fs" />
     <Compile Include="Interfaces\Env.fs" />
-    <Compile Include="interfaces\IFetcher.fs" />
-    <Compile Include="interfaces\ITime.fs" />
-    <Compile Include="interfaces\IDiscord.fs" />
-    <Compile Include="interfaces\IUserRepository.fs" />
-    <Compile Include="interfaces\ISessionCache.fs" />
+    <Compile Include="Interfaces\IFetcher.fs" />
+    <Compile Include="Interfaces\ITime.fs" />
+    <Compile Include="Interfaces\IDiscord.fs" />
+    <Compile Include="Interfaces\IUserRepository.fs" />
+    <Compile Include="Interfaces\ISessionCache.fs" />
     <Compile Include="Interfaces\IAuthService.fs" />
     <Compile Include="Interfaces\IUserService.fs" />
-    <Compile Include="services\Fetcher.fs" />
-    <Compile Include="services\Time.fs" />
+    <Compile Include="Services\Fetcher.fs" />
+    <Compile Include="Services\Time.fs" />
     <Compile Include="Services\AuthService.fs" />
     <Compile Include="Services\UserService.fs" />
   </ItemGroup>

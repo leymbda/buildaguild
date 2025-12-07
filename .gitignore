@@ -1,3 +1,13 @@
-.idea
-.vs
-.vscode
+**/.idea/
+**/.vs/
+**/.vscode/
+**/.wrangler/
+**/bin/
+**/dist/
+**/fable_modules/
+**/node_modules/
+**/obj/
+**/*.fs.js
+**/*.fs.ts
+**/*.map
+**/.env

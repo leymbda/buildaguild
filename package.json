@@ -1,0 +1,18 @@
+{
+    "name": "buildaguild",
+    "private": true,
+    "workspaces": [
+        "Api.Presentation",
+        "App.Client"
+    ],
+    "scripts": {
+        "clean": "dotnet fable clean --yes && dotnet fable clean --lang typescript --yes",
+        "build": "npm run build -ws && wrangler types --cwd Api.Presentation --env-file=.env",
+        "build:ts": "npm run build:ts -ws && wrangler types --cwd Api.Presentation --env-file=.env",
+        "start": "wrangler dev --port 80",
+        "build+start": "npm run build && npm start"
+    },
+    "devDependencies": {
+        "wrangler": "^4.42.2"
+    }
+}

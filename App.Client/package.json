@@ -3,15 +3,18 @@
     "version": "1.0.0",
     "private": true,
     "dependencies": {
+        "@discord/embedded-app-sdk": "^2.4.0",
         "react": "^19.2.1",
         "react-dom": "^19.2.1",
         "use-sync-external-store": "^1.6.0"
     },
     "devDependencies": {
+        "@types/react": "^19.2.7",
+        "@types/react-dom": "^19.2.3",
         "vite": "^7.2.6"
     },
     "scripts": {
         "build": "dotnet fable --sourceMaps --run vite build",
-        "build:ts": "dotnet fable --lang typescript --noCache --sourceMaps --run vite build"
+        "build:ts": "dotnet fable --lang typescript --noCache --sourceMaps"
     }
 }

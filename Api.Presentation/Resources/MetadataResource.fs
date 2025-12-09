@@ -17,3 +17,8 @@ module MetadataResource =
         Encode.object [
             "client_id", Encode.string v.ClientId
         ]
+
+    let decoder: Decoder<MetadataResource> =
+        Decode.object (fun get -> {
+            ClientId = get.Required.Field "client_id" Decode.string
+        })

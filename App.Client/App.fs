@@ -1,15 +1,12 @@
 module App.Client.App
 
+open App.Client.Common
 open Browser
 open Elmish
 open Fable.Bindings.EmbeddedAppSdk
 open Fable.Core
 open Feliz
 open Feliz.UseElmish
-
-type Origin =
-    | Activity
-    | Browser
 
 type Model = {
     Origin: Origin
@@ -33,7 +30,7 @@ let init origin =
     Cmd.ofMsg Connect
 
 let private connect (model: Model) = promise {
-    let clientId = "" // TODO: Get client ID from config request to API
+    let! { ClientId = clientId } = Api.getMetadata()
 
     let sdk: IDiscordSdk =
         match model.Origin with
@@ -44,8 +41,7 @@ let private connect (model: Model) = promise {
 
     let! authorize = sdk.commands.authorize(clientId, [| "identify" |])
 
-    let accessToken = "" // TODO: Get access token from API (using authorize.code)
-    let sessionToken = "" // TODO: Get session token from API
+    let! { AccessToken = accessToken } = Api.login(authorize.code)
 
     let! authenticate = sdk.commands.authenticate(accessToken)
 
@@ -74,13 +70,11 @@ let update (msg: Msg) (model: Model) =
 
 [<ReactComponent>]
 let App () =
-    let origin = Origin.Browser // TODO: Figure out how to check
-
+    let origin = Origin.fromWindow window
     let model, _ = React.useElmish(init, update, origin)
 
     match model.User, model.Sdk with
     | Some user, Some sdk ->
-        console.log(sdk.guildId)
         Html.div $"Hello, {user.global_name |> Option.defaultValue user.username}!"
 
     | _, _ ->
@@ -90,4 +84,4 @@ ReactDOM
     .createRoot(document.getElementById "root")
     .render(App())
     
-// TODO: Removed vite build from ts build because it still tries to use App.fs.js... How to make TS build work? tsc?
+// TODO: Browser origin needs to handle oauth (how to best implement?)

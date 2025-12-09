@@ -17,3 +17,8 @@ module UserResource =
         Encode.object [
             "id", Encode.string v.Id
         ]
+
+    let decoder: Decoder<UserResource> =
+        Decode.object (fun get -> {
+            Id = get.Required.Field "id" Decode.string
+        })

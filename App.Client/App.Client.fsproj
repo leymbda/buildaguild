@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="common\Origin.fs" />
+    <Compile Include="Api.fs" />
     <Compile Include="App.fs" />
     <Content Include="index.html" />
     <None Include="vite.config.js" />
@@ -20,7 +22,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Api.Presentation\Api.Presentation.fsproj" /> <!-- TODO: Restructure solution so resources/responses dont have to be defined here and have the entire api project imported into app -->
     <ProjectReference Include="..\Fable.Bindings\Fable.Bindings.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\" />
   </ItemGroup>
 
 </Project>

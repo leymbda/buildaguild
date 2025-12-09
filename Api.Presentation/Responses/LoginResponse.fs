@@ -20,3 +20,9 @@ module LoginResponse =
             "access_token", Encode.string v.AccessToken
             "user", Encode.option UserResource.encoder v.User
         ]
+
+    let decoder: Decoder<LoginResponse> =
+        Decode.object (fun get -> {
+            AccessToken = get.Required.Field "access_token" Decode.string
+            User = get.Required.Field "user" (Decode.option UserResource.decoder)
+        })

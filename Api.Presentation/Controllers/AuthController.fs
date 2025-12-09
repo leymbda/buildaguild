@@ -23,11 +23,7 @@ let fetch (di: #AuthServiceDI) (req: Request) (parts: string list) =
                     | LoginError.ServerError e -> Response.internalServerError e
                 )
 
-            let res =
-                match data.User with
-                | Some user -> Response.ok (UserResource.fromDomain user) UserResource.encoder
-                | None -> Response.noContent()
-
+            let res = Response.ok (LoginResponse.fromDomain data.AccessToken data.User) LoginResponse.encoder
             res.Headers.set("Set-Cookie", data.SessionToken) // TODO: Make actual cookie using this token
             return res
 

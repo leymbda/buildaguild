@@ -7,6 +7,8 @@
 
   <ItemGroup>
 	  <Compile Include="Resources\UserResource.fs" />
+	  <Folder Include="Responses\" />
+	  <Compile Include="responses\LoginResponse.fs" />
 	  <Folder Include="Controllers\" />
 	  <Compile Include="Controllers\AuthController.fs" />
 	  <None Include="Controllers\AuthController.http" />

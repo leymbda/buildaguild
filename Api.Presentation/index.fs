@@ -59,7 +59,7 @@ type DI(env) =
         }
     
 module Program =
-    let fetch (di: DI) (req: Request) (_ctx: ExecutionContext<unit>) =
+    let fetch di (req: Request) (_ctx: ExecutionContext<unit>) =
         async {
             let parts =
                 URL.Create(req.url).pathname

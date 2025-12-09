@@ -32,6 +32,7 @@ let login (di: #TimeDI & #DiscordDI & #SessionCacheDI & #UserRepositoryDI): Logi
         return {|
             SessionToken = token
             User = user
+            AccessToken = oauth.AccessToken
         |}
     }
 

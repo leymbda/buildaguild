@@ -45,6 +45,11 @@ type DI(env) =
             DeleteSession = KV.deleteSession this
         }
 
+    interface MetadataServiceDI with
+        member this.MetadataService = {
+            GetMetadata = MetadataService.getMetadata this
+        }
+
     interface AuthServiceDI with
         member this.AuthService = {
             Login = AuthService.login this
@@ -59,7 +64,7 @@ type DI(env) =
         }
     
 module Program =
-    let fetch di (req: Request) (_ctx: ExecutionContext<unit>) =
+    let fetch (di: #EnvDI) (req: Request) (_ctx: ExecutionContext<unit>) =
         async {
             let parts =
                 URL.Create(req.url).pathname
@@ -71,10 +76,9 @@ module Program =
             // TODO: Move above into common utility
             
             match req.method, parts with
+            | _, "api" :: "metadata" :: rest -> return! MetadataController.fetch di req rest
             | _, "api" :: "auth" :: rest -> return! AuthController.fetch di req rest
-
             | _, "api" :: "users" :: rest -> return! UserController.fetch di req rest
-
             | _ -> return Response.notFound ""
         }
 

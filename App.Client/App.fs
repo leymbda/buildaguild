@@ -24,8 +24,14 @@ let update (msg: Msg) (model: Model) =
         let sdkModel, sdkCmd = Sdk.update msg model.Sdk
         { model with Sdk = sdkModel }, Cmd.map Msg.Sdk sdkCmd
 
+let subscribe (model: Model): Sub<Msg> =
+    Sub.batch [
+        Sdk.subscribe model.Sdk |> Sub.map "sdk" Msg.Sdk
+    ]
+
 let program () =
     Program.mkProgram init update (fun _ _ -> ())
+    |> Program.withSubscription subscribe
     |> Program.withTermination
         (function
             | Sdk (Sdk.Msg.Terminate) -> true

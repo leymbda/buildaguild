@@ -5,6 +5,7 @@ open App.Client.Common
 open Elmish
 open Fable.Bindings.EmbeddedAppSdk
 open Fable.Core
+open System
 
 let loginBrowser (code: string) = promise {
     let! _ = Api.login(code)
@@ -67,6 +68,7 @@ type Msg =
     | Setup
     | GetClientId of clientId: string
     | GetUser of user: User
+    | UpdateUser of user: User
     | Ready
     | Stop of reason: StopReason
     | Terminate
@@ -108,8 +110,18 @@ let update (msg: Msg) (model: Model) =
     | Model.Active _, Msg.Ready ->
         model, Cmd.none
 
-    | _, Msg.Stop reason ->
-        // TODO: Close sdk if present
+    | Model.Active model, Msg.UpdateUser user ->
+        Model.Active { model with User = user }, Cmd.none
+
+    | model, Msg.Stop reason ->
+        match model with
+        | Model.NotStarted _
+        | Model.Stopped _ -> ()
+        | Model.Starting { Sdk = sdk }
+        | Model.Active { Sdk = sdk } ->
+            match reason with
+            | StopReason.BrowserOAuthFlowInitiate _ -> sdk.close(RpcCloseCode.CLOSE_NORMAL, "Initiating browser oauth flow")
+
         Model.Stopped { Reason = reason }, Cmd.ofMsg (Msg.Terminate)
 
     | Model.Stopped _, Msg.Terminate ->
@@ -118,5 +130,24 @@ let update (msg: Msg) (model: Model) =
     | _, _ ->
         failwith "Unexpected state for given message"
 
+let subscribe (model: Model): Sub<Msg> =
+    Sub.batch [
+        match model with
+        | Model.NotStarted _
+        | Model.Stopped _ -> ()
+        | Model.Starting { Sdk = sdk }
+        | Model.Active { Sdk = sdk } ->
+            [
+                ["CURRENT_USER_UPDATE"],
+                fun dispatch ->
+                    let callback (data: obj) =
+                        unbox<User> data |> Msg.UpdateUser |> dispatch
+
+                    sdk.subscribe("CURRENT_USER_UPDATE ", callback)
+
+                    { new IDisposable with
+                        member _.Dispose () = sdk.unsubscribe("CURRENT_USER_UPDATE", callback) }
+            ]
+    ]
+
 // TODO: Handle refreshing when token expires
-// TODO: Subscribe to events

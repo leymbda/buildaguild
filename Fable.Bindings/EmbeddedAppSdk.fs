@@ -38,10 +38,10 @@ type IDiscordSdk =
     abstract source: Window option
     abstract sourceOrigin: string
     abstract close: code: RpcCloseCode * reason: string -> unit
-    // TODO: subscribe
-    // TODO: unsubscribe
+    abstract subscribe: event: string * listener: (obj -> unit) -> unit // TODO: Proper types
+    abstract unsubscribe: event: string * listener: (obj -> unit) -> unit // TODO: Proper types
     abstract ready: unit -> Promise<unit>
-
+    
 [<AllowNullLiteral; Import("DiscordSDK", "@discord/embedded-app-sdk")>]
 type DiscordSdk =
     inherit IDiscordSdk

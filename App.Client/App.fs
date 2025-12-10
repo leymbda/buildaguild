@@ -1,87 +1,68 @@
 module App.Client.App
 
 open App.Client.Common
+open App.Client.Modules
 open Browser
 open Elmish
-open Fable.Bindings.EmbeddedAppSdk
-open Fable.Core
 open Feliz
 open Feliz.UseElmish
 
 type Model = {
-    Origin: Origin
-    ClientId: string option
-    Sdk: IDiscordSdk option
-    User: User option
+    Sdk: Sdk.Model
 }
 
 type Msg =
-    | Connect
-    | Ready of ClientId: string * Sdk: IDiscordSdk * User: User
-    | Error of exn
+    | Sdk of Sdk.Msg
 
-let init origin =
-    {
-        Origin = origin
-        ClientId = None
-        Sdk = None
-        User = None
-    },
-    Cmd.ofMsg Connect
-
-let private connect (model: Model) = promise {
-    let! { ClientId = clientId } = Api.getMetadata()
-
-    let sdk: IDiscordSdk =
-        match model.Origin with
-        | Origin.Activity -> DiscordSdk.create clientId None
-        | Origin.Browser -> DiscordSdkMock.create clientId None None None
-
-    do! sdk.ready()
-
-    let! authorize = sdk.commands.authorize(clientId, [| "identify" |])
-
-    let! { AccessToken = accessToken } = Api.login(authorize.code)
-
-    let! authenticate = sdk.commands.authenticate(accessToken)
-
-    return {| ClientId = clientId; Sdk = sdk; User = authenticate.user |}
-}
+let init (origin, code) =
+    let sdkModel, sdkCmd = Sdk.init (origin, code)
+    { Sdk = sdkModel }, Cmd.map Msg.Sdk sdkCmd
 
 let update (msg: Msg) (model: Model) =
     match msg, model with
-    | Connect, _ ->
-        model,
-        Cmd.OfAsync.either
-            (connect >> Async.AwaitPromise)
-            model
-            (fun res -> Ready (res.ClientId, res.Sdk, res.User))
-            Error
+    | Sdk msg, model ->
+        let sdkModel, sdkCmd = Sdk.update msg model.Sdk
+        { model with Sdk = sdkModel }, Cmd.map Msg.Sdk sdkCmd
 
-    | Ready (clientId, sdk, user), _ ->
-        { model with ClientId = Some clientId; Sdk = Some sdk; User = Some user }, Cmd.none
+let program () =
+    Program.mkProgram init update (fun _ _ -> ())
+    |> Program.withTermination
+        (function
+            | Sdk (Sdk.Msg.Terminate) -> true
+            | _ -> false
+        )
+        (function
+            | { Sdk = Sdk.Model.Stopped { Reason = Sdk.StopReason.BrowserOAuthFlowInitiate clientId } } ->
+                let redirectUri = window.encodeURIComponent(window.location.href)
+                window.location.href <- $"https://discord.com/oauth2/authorize?response_type=code&client_id={clientId}&scope=identify&redirect_uri={redirectUri}"
 
-    | (Error exn), { Sdk = Some sdk } ->
-        sdk.close(RpcCloseCode.CLOSE_ABNORMAL, exn.Message)
-        raise exn
-
-    | (Error exn), { Sdk = None } ->
-        raise exn
+            | _ ->
+                failwith "Unexpected termination"
+        )
 
 [<ReactComponent>]
 let App () =
     let origin = Origin.fromWindow window
-    let model, _ = React.useElmish(init, update, origin)
 
-    match model.User, model.Sdk with
-    | Some user, Some sdk ->
-        Html.div $"Hello, {user.global_name |> Option.defaultValue user.username}!"
+    let code = React.useMemo(
+        (fun () -> URLSearchParams.Create(window.location.search).get("code")),
+        [| |]
+    )
 
-    | _, _ ->
-        Html.div "Connecting to Discord SDK..."
+    if code.IsSome then
+        let currentUrl = URL.Create(window.location.href)
+        currentUrl.searchParams.delete("code");
+        history.replaceState(null, url = currentUrl.href);
+
+    let model, _ = React.useElmish(program, arg = (origin, code))
+
+    match model.Sdk with
+    | Sdk.Model.Active model ->
+        Html.div $"Hello {model.User.global_name |> Option.defaultValue model.User.username}!"
+
+    | _ -> Html.div []
 
 ReactDOM
     .createRoot(document.getElementById "root")
     .render(App())
     
-// TODO: Browser origin needs to handle oauth (how to best implement?)

@@ -66,7 +66,7 @@ type DiscordSdkCommands =
 type DiscordSdkMock =
     inherit IDiscordSdk
     abstract locationId: string option
-    // TODO: _updateCommandMocks
+    abstract _updateCommandMocks: DiscordSdkCommands -> DiscordSdkCommands
     abstract emitReady: unit -> unit
     // TODO: emitEvent
     
@@ -75,6 +75,10 @@ module DiscordSdkMock =
     [<Import("DiscordSDKMock", "@discord/embedded-app-sdk"); Emit("new $0($1...)")>]
     let create (clientId: string) (guildId: string option) (channelId: string option) (locationId: string option): DiscordSdkMock = jsNative
     // TODO: Above is returning undefined not null for options... how to fix?
+    
+    let updateCommandMocks (newMocks: DiscordSdkCommands) (sdk: DiscordSdkMock) =
+        sdk._updateCommandMocks(newMocks) |> ignore
+        sdk
 
 /// https://discord.com/developers/docs/developer-tools/embedded-app-sdk#application
 [<AllowNullLiteral; Erase>]

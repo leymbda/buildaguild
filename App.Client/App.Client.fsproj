@@ -6,8 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="common\Origin.fs" />
     <Compile Include="Api.fs" />
+    <Folder Include="Common\" />
+    <Compile Include="common\Origin.fs" />
+    <Compile Include="Modules\Sdk.fs" />
     <Compile Include="App.fs" />
     <Content Include="index.html" />
     <None Include="vite.config.js" />
@@ -26,8 +28,6 @@
     <ProjectReference Include="..\Fable.Bindings\Fable.Bindings.fsproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Common\" />
-  </ItemGroup>
+  <ItemGroup />
 
 </Project>

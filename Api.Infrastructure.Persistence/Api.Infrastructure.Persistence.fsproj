@@ -6,16 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Migrations\202512101718_create_user_table.sql" />
     <Compile Include="Models\SessionModel.fs" />
     <Compile Include="Models\UserModel.fs" />
     <Compile Include="D1.fs" />
     <Compile Include="KV.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-    <None Include="migrations\202512061016_create_user_table.sql" />
-    <Folder Include="Models\" />
   </ItemGroup>
 
   <ItemGroup />

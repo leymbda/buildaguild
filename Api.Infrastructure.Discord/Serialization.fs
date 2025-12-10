@@ -18,4 +18,6 @@ module UserResponse =
     let decoder: Decoder<UserResponse> =
         Decode.object (fun get -> {
             Id = get.Required.Field "id" (Decode.string |> Decode.map Int64.Parse)
+            GlobalName = get.Required.Field "global_name" (Decode.option Decode.string)
+            Username = get.Required.Field "username" Decode.string
         })

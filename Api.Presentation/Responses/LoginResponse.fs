@@ -5,24 +5,24 @@ open Thoth.Json
 
 type LoginResponse = {
     AccessToken: string
-    User: UserResource option
+    User: UserResource
 }
 
 module LoginResponse =
-    let fromDomain (accessToken: string) (user: User option): LoginResponse =
+    let fromDomain (accessToken: string) (user: User): LoginResponse =
         {
             AccessToken = accessToken
-            User = Option.map UserResource.fromDomain user
+            User = UserResource.fromDomain user
         }
 
     let encoder (v: LoginResponse) =
         Encode.object [
             "access_token", Encode.string v.AccessToken
-            "user", Encode.option UserResource.encoder v.User
+            "user", UserResource.encoder v.User
         ]
 
     let decoder: Decoder<LoginResponse> =
         Decode.object (fun get -> {
             AccessToken = get.Required.Field "access_token" Decode.string
-            User = get.Required.Field "user" (Decode.option UserResource.decoder)
+            User = get.Required.Field "user" UserResource.decoder
         })

@@ -3,23 +3,15 @@ namespace rec Api.Application
 open Domain
 
 type IUserRepository = {
-    CreateUser: IUserRepository.CreateUser
+    UpsertUser: IUserRepository.UpsertUser
     GetUserById: IUserRepository.GetUserById
     DeleteUserById: IUserRepository.DeleteUserById
 }
 
 module IUserRepository =
-    type CreateUserError =
-        | UserAlreadyExists of Id
-        | DatabaseError of string
-        
-    type CreateUser = Id -> Async<Result<User, CreateUserError>>
+    type UpsertUser = Id -> string -> Async<User>
 
-    type GetUserByIdError =
-        | UserNotFound of Id
-        | DatabaseError of string
-
-    type GetUserById = Id -> Async<Result<User, GetUserByIdError>>
+    type GetUserById = Id -> Async<User option>
     
     type DeleteUserById = Id -> Async<bool>
 

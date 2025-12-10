@@ -24,13 +24,11 @@ let login (di: #TimeDI & #DiscordDI & #SessionCacheDI & #UserRepositoryDI): Logi
         }
 
         do! di.SessionCache.PutSession token session
-
-        let! user =
-            di.UserRepository.GetUserById session.UserId
-            |> Async.map Result.toOption
+        
+        let displayName = user.GlobalName |> Option.defaultValue user.Username
+        let! user = di.UserRepository.UpsertUser session.UserId displayName
 
         return {|
-            SessionToken = token
             User = user
             AccessToken = oauth.AccessToken
         |}

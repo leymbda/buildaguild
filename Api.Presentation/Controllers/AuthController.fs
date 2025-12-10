@@ -24,7 +24,6 @@ let fetch (di: #AuthServiceDI) (req: Request) (parts: string list) =
                 )
 
             let res = Response.ok (LoginResponse.fromDomain data.AccessToken data.User) LoginResponse.encoder
-            res.Headers.set("Set-Cookie", data.SessionToken) // TODO: Make actual cookie using this token
             return res
 
         | "POST", ["logout"] ->

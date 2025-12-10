@@ -7,7 +7,7 @@ module IAuthService =
         | InvalidCode
         | ServerError of string
 
-    type Login = string -> Async<Result<{| User: User option; SessionToken: string; AccessToken: string |}, LoginError>>
+    type Login = string -> Async<Result<{| User: User; AccessToken: string |}, LoginError>>
 
     type LogoutError =
         | SessionNotFound

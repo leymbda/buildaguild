@@ -23,4 +23,6 @@ type OAuthTokenExchangeResponse = {
 
 type UserResponse = {
     Id: int64
+    GlobalName: string option
+    Username: string
 }

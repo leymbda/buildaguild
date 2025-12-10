@@ -33,7 +33,7 @@ type DI(env) =
 
     interface UserRepositoryDI with
         member this.UserRepository = {
-            CreateUser = D1.createUser this
+            UpsertUser = D1.upsertUser this
             GetUserById = D1.getUserById this
             DeleteUserById = D1.deleteUserById this
         }
@@ -58,7 +58,6 @@ type DI(env) =
 
     interface UserServiceDI with
         member this.UserService = {
-            CreateUser = UserService.createUser this
             GetUserById = UserService.getUserById this
             DeleteUserById = UserService.deleteUserById this
         }

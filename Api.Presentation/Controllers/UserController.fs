@@ -14,21 +14,6 @@ let fetch (di: #UserServiceDI & #SessionCacheDI) (req: Request) (parts: string l
         let! session = di.SessionCache.GetSession token
 
         match req.method, parts, session with
-        | "PUT", [Id.FromRoute userId], Some session ->
-            match! di.UserService.CreateUser session userId with
-            | Error CreateUserError.NotAuthorized -> return Response.forbidden()
-            | Error (CreateUserError.UserAlreadyExists id) -> return Response.conflict $"User '{Id.toString id}' already exists"
-            | Error (CreateUserError.ServerError e) -> return Response.internalServerError e
-            | Ok user ->
-                let link = $"{url.origin}/api/users/{Id.toString user.Id}"
-                return Response.created (UserResource.fromDomain user) UserResource.encoder link
-
-        | "PUT", [userId], Some _ ->
-            return Response.badRequest $"Invalid 'userId' of '{userId}' provided in route"
-
-        | "PUT", [_], None ->
-            return Response.unauthorized()
-
         | "GET", [Id.FromRoute userId], Some session ->
             match! di.UserService.GetUserById session userId with
             | Error (GetUserByIdError.UserNotFound id) -> return Response.notFound $"User '{Id.toString id}' not found"

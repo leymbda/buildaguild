@@ -6,40 +6,33 @@ open Domain
 open Fable.Bindings.CloudflareWorkers
 open FsToolkit.ErrorHandling
 
-let createUser (di: #EnvDI): CreateUser =
-    fun id -> asyncResult {
+let upsertUser (di: #EnvDI): UpsertUser =
+    fun id displayName -> async {
         let! res =
-            di.Env.D1.prepare("INSERT INTO users (id) VALUES (?) RETURNING *")
-            |> D1PreparedStatement.bind [| Id.toString id |]
+            di.Env.D1.prepare("INSERT OR REPLACE INTO users (id, display_name) VALUES (?, ?) RETURNING *")
+            |> D1PreparedStatement.bind [| Id.toString id; displayName |]
             |> D1PreparedStatement.query UserModel.decoder
 
-        let! model =
-            res.results
-            |> Array.tryHead
-            |> Result.requireSome (CreateUserError.UserAlreadyExists id)
+        Fable.Core.JS.console.log(res)
 
-        return!
-            model
+        return res.results
+            |> Array.head
             |> UserModel.toDomain
-            |> Result.mapError CreateUserError.DatabaseError
     }
 
 let getUserById (di: #EnvDI): GetUserById =
-    fun id -> asyncResult {
+    fun id -> async {
         let! res =
             di.Env.D1.prepare("SELECT * FROM users WHERE id = ?")
             |> D1PreparedStatement.bind [| Id.toString id |]
             |> D1PreparedStatement.query (UserModel.decoder)
 
-        let! model =
+        Fable.Core.JS.console.log(res)
+
+        return
             res.results
             |> Array.tryHead
-            |> Result.requireSome (GetUserByIdError.UserNotFound id)
-            
-        return!
-            model
-            |> UserModel.toDomain
-            |> Result.mapError GetUserByIdError.DatabaseError
+            |> Option.map UserModel.toDomain
     }
 
 let deleteUserById (di: #EnvDI): DeleteUserById =

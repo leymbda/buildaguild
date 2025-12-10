@@ -64,7 +64,7 @@ let App () =
 
     match model.Sdk with
     | Sdk.Model.Active model ->
-        Html.div $"Hello {model.User.global_name |> Option.defaultValue model.User.username}!"
+        Html.div $"Hello {model.User.DisplayName}!"
 
     | _ -> Html.div []
 

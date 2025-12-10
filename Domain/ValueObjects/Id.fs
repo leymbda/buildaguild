@@ -18,3 +18,6 @@ module Id =
 
     let toString (Id id) =
         id.ToString()
+
+    let toInt64 (Id id) =
+        id

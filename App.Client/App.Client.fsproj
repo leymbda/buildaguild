@@ -8,7 +8,7 @@
   <ItemGroup>
     <Compile Include="Api.fs" />
     <Folder Include="Common\" />
-    <Compile Include="common\Origin.fs" />
+    <Compile Include="Common\Origin.fs" />
     <Compile Include="Modules\Sdk.fs" />
     <Compile Include="App.fs" />
     <Content Include="index.html" />

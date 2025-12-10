@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="models\Metadata.fs" />
+    <Compile Include="Models\Metadata.fs" />
     <Compile Include="Models\Session.fs" />
     <Compile Include="Interfaces\Env.fs" />
     <Compile Include="Interfaces\IFetcher.fs" />
@@ -14,12 +14,12 @@
     <Compile Include="Interfaces\IDiscord.fs" />
     <Compile Include="Interfaces\IUserRepository.fs" />
     <Compile Include="Interfaces\ISessionCache.fs" />
-    <Compile Include="interfaces\IMetadataService.fs" />
+    <Compile Include="Interfaces\IMetadataService.fs" />
     <Compile Include="Interfaces\IAuthService.fs" />
     <Compile Include="Interfaces\IUserService.fs" />
     <Compile Include="Services\Fetcher.fs" />
     <Compile Include="Services\Time.fs" />
-    <Compile Include="services\MetadataService.fs" />
+    <Compile Include="Services\MetadataService.fs" />
     <Compile Include="Services\AuthService.fs" />
     <Compile Include="Services\UserService.fs" />
   </ItemGroup>
@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="10.0.100" />
+    <PackageReference Update="FSharp.Core" Version="10.0.101" />
   </ItemGroup>
 
   <ItemGroup />

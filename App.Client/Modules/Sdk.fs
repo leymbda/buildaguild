@@ -1,27 +1,22 @@
 module App.Client.Modules.Sdk
 
+open Api.Presentation
 open App.Client
 open App.Client.Common
+open Domain
 open Elmish
 open Fable.Bindings.EmbeddedAppSdk
 open Fable.Core
 open System
 
 let loginBrowser (code: string) = promise {
-    let! _ = Api.login(code)
-
-    return { new User with
-        member _.id = "1234"
-        member _.username = "mock_username"
-        member _.discriminator = "0"
-        member _.global_name = None
-        member _.avatar = None
-        member _.avatar_decoration_data = None
-        member _.bot = false
-        member _.flags = None
-        member _.premium_type = None }
-        
-    // TODO: Rewrite API to just use the discord user rather than a custom domain user type, then return here
+    return!
+        Api.login(code)
+        |> Promise.map (
+            _.User
+            >> UserResource.toDomain
+            >> Result.defaultWith failwith
+        )
 }
 
 let loginActivity (sdk: DiscordSdk) = promise {
@@ -29,11 +24,14 @@ let loginActivity (sdk: DiscordSdk) = promise {
 
     let! authorize = sdk.commands.authorize(sdk.clientId, [| "identify" |])
 
-    let! { AccessToken = accessToken } = Api.login(authorize.code)
+    let! login = Api.login(authorize.code)
 
-    let! authenticate = sdk.commands.authenticate(accessToken) // TOOD: If api returns user, will this still be needed?
+    let! _ = sdk.commands.authenticate(login.AccessToken) // TOOD: Is this needed?
 
-    return authenticate.user
+    return
+        login.User
+        |> UserResource.toDomain
+        |> Result.defaultWith failwith
 }
 
 type StopReason =
@@ -51,7 +49,7 @@ type StartingModel = {
 
 type ActiveModel = {
     Sdk: IDiscordSdk
-    User: User
+    User: Domain.User
 }
 
 type StoppedModel = {
@@ -67,8 +65,8 @@ type Model =
 type Msg =
     | Setup
     | GetClientId of clientId: string
-    | GetUser of user: User
-    | UpdateUser of user: User
+    | GetUser of user: Domain.User
+    | UpdateUser of user: Domain.User
     | Ready
     | Stop of reason: StopReason
     | Terminate
@@ -111,7 +109,7 @@ let update (msg: Msg) (model: Model) =
         model, Cmd.none
 
     | Model.Active model, Msg.UpdateUser user ->
-        Model.Active { model with User = user }, Cmd.none
+        Model.Active { model with User = user }, Cmd.none // TODO: Call api to update user details
 
     | model, Msg.Stop reason ->
         match model with
@@ -141,7 +139,14 @@ let subscribe (model: Model): Sub<Msg> =
                 ["CURRENT_USER_UPDATE"],
                 fun dispatch ->
                     let callback (data: obj) =
-                        unbox<User> data |> Msg.UpdateUser |> dispatch
+                        let user = unbox<User> data
+
+                        let domainUser = {
+                            Id = Id.fromString user.id |> Option.get
+                            DisplayName = user.global_name |> Option.defaultValue user.username
+                        }
+                            
+                        domainUser |> Msg.UpdateUser |> dispatch
 
                     sdk.subscribe("CURRENT_USER_UPDATE ", callback)
 
